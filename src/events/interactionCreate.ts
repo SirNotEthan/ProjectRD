@@ -23,7 +23,7 @@ export async function execute(interaction: Interaction): Promise<void> {
       await handleModalInteraction(interaction);
     }
   } catch (error) {
-    console.error('❌ Unexpected interaction handling error:', error);
+    console.error('Unexpected interaction handling error:', error);
   }
 }
 
@@ -34,7 +34,7 @@ async function handleChatInputCommand(
   const { commands } = client;
 
   if (!commands?.has(interaction.commandName)) {
-    console.warn(`⚠️ Unknown command: ${interaction.commandName}`);
+    console.warn(`Unknown command: ${interaction.commandName}`);
     return sendErrorResponse(
       interaction,
       `Command \`${interaction.commandName}\` not found.`,
@@ -46,13 +46,13 @@ async function handleChatInputCommand(
   const command = commands.get(interaction.commandName)!;
 
   try {
-    console.log(`🔄 Running /${interaction.commandName} by ${interaction.user.tag}`);
+    console.log(`Running /${interaction.commandName} by ${interaction.user.tag}`);
     const start = Date.now();
     await command.execute(interaction);
     const ms = Date.now() - start;
-    console.log(`✅ ${interaction.commandName} executed in ${ms}ms`);
+    console.log(`${interaction.commandName} executed in ${ms}ms`);
   } catch (err) {
-    console.error(`❌ Error in command ${interaction.commandName}:`, err);
+    console.error(`Error in command ${interaction.commandName}:`, err);
     await sendErrorResponse(
       interaction,
       'Something went wrong while executing the command.',
@@ -63,41 +63,44 @@ async function handleChatInputCommand(
 }
 
 async function handleButtonInteraction(interaction: ButtonInteraction): Promise<void> {
-  console.log(`🔘 Button: ${interaction.customId} by ${interaction.user.tag}`);
+  console.log(`Button: ${interaction.customId} by ${interaction.user.tag}`);
+  const client = interaction.client as Client & { commands?: Collection<string, Command> };
 
   try {
     switch (interaction.customId) {
+      case 'ping_refresh':
+        break;
       default:
-        console.info(`ℹ️ Unhandled button: ${interaction.customId}`);
+        console.info(`Unhandled button: ${interaction.customId}`);
     }
   } catch (err) {
-    console.error(`❌ Button error (${interaction.customId}):`, err);
+    console.error(`Button error (${interaction.customId}):`, err);
   }
 }
 
 async function handleSelectMenuInteraction(interaction: StringSelectMenuInteraction): Promise<void> {
-  console.log(`📋 Select Menu: ${interaction.customId} by ${interaction.user.tag}`);
+  console.log(`Select Menu: ${interaction.customId} by ${interaction.user.tag}`);
 
   try {
     switch (interaction.customId) {
       default:
-        console.info(`ℹ️ Unhandled select menu: ${interaction.customId}`);
+        console.info(`Unhandled select menu: ${interaction.customId}`);
     }
   } catch (err) {
-    console.error(`❌ Select menu error (${interaction.customId}):`, err);
+    console.error(`Select menu error (${interaction.customId}):`, err);
   }
 }
 
 async function handleModalInteraction(interaction: ModalSubmitInteraction): Promise<void> {
-  console.log(`📝 Modal: ${interaction.customId} by ${interaction.user.tag}`);
+  console.log(`Modal: ${interaction.customId} by ${interaction.user.tag}`);
 
   try {
     switch (interaction.customId) {
       default:
-        console.info(`ℹ️ Unhandled modal: ${interaction.customId}`);
+        console.info(`Unhandled modal: ${interaction.customId}`);
     }
   } catch (err) {
-    console.error(`❌ Modal error (${interaction.customId}):`, err);
+    console.error(`Modal error (${interaction.customId}):`, err);
   }
 }
 
@@ -116,6 +119,6 @@ async function sendErrorResponse(
       await interaction.reply(message);
     }
   } catch (replyErr) {
-    console.error('❌ Failed to reply with error:', replyErr);
+    console.error('Failed to reply with error:', replyErr);
   }
 }

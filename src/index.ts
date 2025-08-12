@@ -44,7 +44,7 @@ async function loadCommands(): Promise<void> {
       for (const file of commandFiles) {
         const filePath = join(folderPath, file);
         const command = await import(filePath);
-        if ('data' in command.defaultt && 'execute' in command.default) {
+        if ('data' in command.default && 'execute' in command.default) {
           client.commands.set(command.default.data.name, command.default);
           console.log(`Loaded command: ${command.default.data.name} from ${filePath}`);
         } else {
@@ -61,19 +61,23 @@ async function loadCommands(): Promise<void> {
 async function loadEvents(): Promise<void> {
   const eventsPath = join(__dirname, 'events');
   try {
+    if (!existsSync(eventsPath)) {
+      console.log('Events directory not found. Skipping event loading.');
+      return;
+    }
     const eventFiles = readdirSync(eventsPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
 
       for (const file of eventFiles) {
         const filePath = join(eventsPath, file);
         const event = await import(filePath);
 
-        if ('name' in event.default && 'execute' in event.default) {
-          if (event.default.once) {
-            client.once(event.default.name, (...args) => event.default.execute(...args));
+        if ('name' in event && 'execute' in event) {
+          if (event.once) {
+            client.once(event.name, (...args) => event.execute(...args));
           } else {
-            client.on(event.default.name, (...args) => event.default.execute(...args));
+            client.on(event.name, (...args) => event.execute(...args));
           }
-          console.log(`Loaded Event: ${event.default.name} (${event.default.once ? 'once' : 'on'})`);
+          console.log(`Loaded Event: ${event.name} (${event.once ? 'once' : 'on'})`);
         } else {
           console.log(`Event at ${filePath} is missing required properties.`);
         }
