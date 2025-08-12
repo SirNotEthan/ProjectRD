@@ -1,0 +1,28 @@
+{
+  "name": "projectrd",
+  "version": "1.0.0",
+  "description": "Discord bot for ProjectRD community management",
+  "license": "ISC",
+  "author": "Ethan B",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "postinstall": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "discord.js": "^14.21.0",
+    "dotenv": "^17.2.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
+    "@types/node": "^20.0.0"
+  }
+}
