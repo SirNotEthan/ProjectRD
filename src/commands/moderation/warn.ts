@@ -93,8 +93,8 @@ async function execute(interaction: ChatInputCommandInteraction): Promise<void> 
 
     if (result.success) {
         await interaction.reply({
-            content: `Successfully warned ${targetUser.tag}`,
-            ephemeral: true,
+            content: `Successfully warned ${targetUser.tag}\nReason: ${reason}`,
+            ephemeral: false,
         });
 
         await sendToLoggingChannel(interaction, result);
@@ -151,7 +151,7 @@ async function sendToLoggingChannel(
 
         if (logChannel && logChannel.isTextBased()) {
             const logEmbed = new EmbedBuilder()
-                .setTitle("🔺 User Warned")
+                .setTitle("User Warned")
                 .addFields(
                     { name: "User", value: result.targetUser ?? result.user ?? "-", inline: true },
                     { name: "Moderator", value: result.moderator ?? "-", inline: true },
@@ -186,25 +186,30 @@ async function sendWarnMessageToUser(
 ): Promise<void> {
     try {
         const warnEmbed = new EmbedBuilder()
-            .setTitle("⚠️ Warning Received")
-            .setDescription(`You have been warned in **${interaction.guild?.name}**`)
+            .setTitle("Official Warning")
+            .setDescription(`You have received a warning in **${interaction.guild?.name}**`)
             .addFields(
-                { name: "Reason", value: reason, inline: false },
-                { name: "Moderator", value: moderator, inline: true },
-                { name: "Server", value: interaction.guild?.name ?? "Unknown", inline: true }
+                { name: "Reason", value: `\`\`\`${reason}\`\`\``, inline: false },
+                { name: "Issued by", value: moderator, inline: true },
+                { name: "Date", value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: true }
             )
-            .setColor(0xffcc00)
-            .setTimestamp();
+            .setColor(0xff6b35)
+            .setTimestamp()
+            .setThumbnail(targetMember.user.displayAvatarURL())
+            .setFooter({ 
+                text: `Warning issued in ${interaction.guild?.name}`,
+                iconURL: interaction.guild?.iconURL() || undefined
+            });
 
         const evidence = interaction.options.getAttachment("evidence");
         if (evidence) {
-            warnEmbed.addFields({ name: "Evidence", value: evidence.url, inline: false });
+            warnEmbed.addFields({ name: "Evidence", value: `[View Evidence](${evidence.url})`, inline: false });
         }
 
         await targetMember.send({ embeds: [warnEmbed] });
 
         const appealEmbed = new EmbedBuilder()
-            .setTitle("📞 Appeal Information")
+            .setTitle("Appeal Information")
             .setDescription("If you believe this warning was issued in error, you can appeal it.")
             .addFields(
                 { name: "How to Appeal", value: "Contact a server administrator or moderator to discuss your warning.", inline: false },
