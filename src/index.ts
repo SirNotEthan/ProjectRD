@@ -2,6 +2,7 @@ import { REST, Routes, Client, GatewayIntentBits, Collection } from 'discord.js'
 import { config } from 'dotenv';
 import { readdirSync, existsSync } from 'fs';
 import { join } from 'path';
+import database from './database/database';
 config();
 
 declare module 'discord.js' {
@@ -191,24 +192,28 @@ async function initializeBot(): Promise<void> {
 
 process.on('SIGINT', () => {
     console.log('Received SIGINT. Shutting down gracefully...');
+    database.close();
     client.destroy();
     process.exit(0);
 });
 
 process.on('SIGTERM', () => {
     console.log('Received SIGTERM. Shutting down gracefully...');
+    database.close();
     client.destroy();
     process.exit(0);
 });
 
 process.on('uncaughtException', (error) => {
     console.error('Uncaught Exception:', error);
+    database.close();
     client.destroy();
     process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    database.close();
     client.destroy();
     process.exit(1);
 });
