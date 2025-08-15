@@ -99,7 +99,7 @@ async function execute(interaction: ChatInputCommandInteraction): Promise<void> 
 
     if (result.success) {
       await interaction.reply({
-        content: `Successfully warned ${targetUser.tag}\nReason: ${reason} Infraction ID: \`${result.infractionId}\``,
+        content: `Successfully warned ${targetUser.tag}\nReason: ${reason}`,
         ephemeral: false,
       });
 
